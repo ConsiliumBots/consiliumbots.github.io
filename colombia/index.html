@@ -1,125 +1,111 @@
-<html xmlns:v="urn:schemas-microsoft-com:vml"
-xmlns:o="urn:schemas-microsoft-com:office:office"
-xmlns:w="urn:schemas-microsoft-com:office:word"
-xmlns:m="http://schemas.microsoft.com/office/2004/12/omml"
-xmlns="http://www.w3.org/TR/REC-html40">
-
+<!DOCTYPE html>
+<html>
 <head>
-<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
-<meta name=ProgId content=Word.Document>
-<meta name=Generator content="Microsoft Word 15">
-<meta name=Originator content="Microsoft Word 15">
-<link rel=File-List href="index_archivos/filelist.xml">
-<!--[if gte mso 9]><xml>
- <o:DocumentProperties>
-  <o:Author>Gonzalo Oyanedel Vial</o:Author>
-  <o:LastAuthor>Gonzalo Oyanedel Vial</o:LastAuthor>
-  <o:Revision>2</o:Revision>
-  <o:TotalTime>0</o:TotalTime>
-  <o:Created>2018-09-19T22:28:00Z</o:Created>
-  <o:LastSaved>2018-09-19T22:28:00Z</o:LastSaved>
-  <o:Pages>1</o:Pages>
-  <o:Characters>4</o:Characters>
-  <o:Lines>1</o:Lines>
-  <o:Paragraphs>1</o:Paragraphs>
-  <o:CharactersWithSpaces>4</o:CharactersWithSpaces>
-  <o:Version>16.00</o:Version>
- </o:DocumentProperties>
- <o:OfficeDocumentSettings>
-  <o:AllowPNG/>
- </o:OfficeDocumentSettings>
-</xml><![endif]-->
-<link rel=themeData href="index_archivos/themedata.thmx">
-<link rel=colorSchemeMapping href="index_archivos/colorschememapping.xml">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ICFES-Bot: panel de seguimiento</title>
+  <link rel="stylesheet" type="text/css" href="style/style_new.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.1/css/bulma.min.css">
+  <script defer src="https://use.fontawesome.com/releases/v5.1.0/js/all.js"></script>
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
 
-<style>
-<!--
- /* Font Definitions */
- @font-face
-	{font-family:"Cambria Math";
-	panose-1:2 4 5 3 5 4 6 3 2 4;
-	mso-font-charset:0;
-	mso-generic-font-family:roman;
-	mso-font-pitch:variable;
-	mso-font-signature:3 0 0 0 1 0;}
-@font-face
-	{font-family:Calibri;
-	panose-1:2 15 5 2 2 2 4 3 2 4;
-	mso-font-charset:0;
-	mso-generic-font-family:swiss;
-	mso-font-pitch:variable;
-	mso-font-signature:-536859905 -1073732485 9 0 511 0;}
- /* Style Definitions */
- p.MsoNormal, li.MsoNormal, div.MsoNormal
-	{mso-style-unhide:no;
-	mso-style-qformat:yes;
-	mso-style-parent:"";
-	margin-top:0cm;
-	margin-right:0cm;
-	margin-bottom:8.0pt;
-	margin-left:0cm;
-	line-height:107%;
-	mso-pagination:widow-orphan;
-	font-size:11.0pt;
-	font-family:"Calibri",sans-serif;
-	mso-ascii-font-family:Calibri;
-	mso-ascii-theme-font:minor-latin;
-	mso-fareast-font-family:Calibri;
-	mso-fareast-theme-font:minor-latin;
-	mso-hansi-font-family:Calibri;
-	mso-hansi-theme-font:minor-latin;
-	mso-bidi-font-family:Arial;
-	mso-bidi-theme-font:minor-bidi;}
-.MsoChpDefault
-	{mso-style-type:export-only;
-	mso-default-props:yes;
-	font-family:"Calibri",sans-serif;
-	mso-ascii-font-family:Calibri;
-	mso-ascii-theme-font:minor-latin;
-	mso-fareast-font-family:Calibri;
-	mso-fareast-theme-font:minor-latin;
-	mso-hansi-font-family:Calibri;
-	mso-hansi-theme-font:minor-latin;
-	mso-bidi-font-family:Arial;
-	mso-bidi-theme-font:minor-bidi;}
-.MsoPapDefault
-	{mso-style-type:export-only;
-	margin-bottom:8.0pt;
-	line-height:107%;}
-@page WordSection1
-	{size:612.0pt 792.0pt;
-	margin:70.85pt 3.0cm 70.85pt 3.0cm;
-	mso-header-margin:35.4pt;
-	mso-footer-margin:35.4pt;
-	mso-paper-source:0;}
-div.WordSection1
-	{page:WordSection1;}
--->
+  <style type="text/css">
+  .newblue{
+    background: #3ABEFF;
+    color: white;
+  }
+  .new-hero-color{
+    background: #26A0A8;
+
+  }
+  .is-white{
+    color: white;
+  }
 </style>
-
 </head>
+<body>
 
-<body lang=EN-US style='tab-interval:36.0pt'>
+  <section class="hero is-medium new-hero-color">
+    <div class="hero-body">
+      <div class="container">
+        <div class="columns">
 
-<div class=WordSection1>
+          <div class="column is-8">
+            <div class="columns is-gapless">
+              <div class="column has-text-centered is-2">
+               <img src="https://cdn0.iconfinder.com/data/icons/innova/32/innova_Robot-512.png" width="70px">  
+              </div>
+          
+             <div class="column is-10">
+              <h1 class="title is-white"><br>
+                ICFES-Bot
+              </h1>
+              <h2 class="subtitle is-white">
+                Panel de seguimeiento
+              </h2>
+            </div>
 
-<p class=MsoNormal><span lang=ES-CL style='mso-ansi-language:ES-CL'>Follow-up Panel<o:p></o:p></span></p>
+          </div>
+        </div>
 
-<p>Estadística generales: </p>
-Interacciones: 190
-Tasa de Engagement: 2.2%
-Promedio de interacciones por usuario: 12.08
+      </div>
+    </div>   
+  </section>
 
-<p>Desglose por grupo diario: </p>
-D01    187
-D06      1
-D05      1
-D07      1
-Name: day_group, dtype: int64
-
-
+<div class="tabs is-small is-right">
+  <ul>
+    <li><a>Optimizado para Google Chrome</a></li>
+    <li class="is-active">Última actualización: 19 de Septiembre de 2018</li>
+  </ul>
 </div>
 
-</body>
+  <section class="section">
+    <div class="columns">
+    <div class="container">
+    <div class="column is-three-quarters">
+          <h1 class="title">
+        Estadísticas generales
+      </h1>
+    <div class="content">
+      <li>Interacciones: <b>190</b></li>
+      <li>Tasa de Engagement: <b>2.2%</b></li>
+      <li>Promedio de interacciones por usuario <b>12.08</b></li>
 
-</html>
+<h2>Desglose por grupo diario: </h2>
+<li>D01: 187</li>
+<li>D06: 1</li>
+<li>D05: 1</li>
+<li>D07: 1</li>
+
+    </ul>
+    </div>
+    </div>
+    </div>
+    </div>
+    </section>
+
+    <section class="hero is-small new-hero-color">
+      <div class="hero-body">
+        <div class="container">
+          <h1 class="title is-white">
+            Otra sección <i class="far fa-money-bill-alt is-right"></i>
+          </h1>
+        </div>
+      </div>
+    </section>
+
+
+<footer class="footer">
+  <div class="content has-text-centered">
+
+    <p>
+      ICFES-Bot (2018)
+    </p>
+
+
+  </div>
+</footer>
+
+
+    </body>
+    </html>

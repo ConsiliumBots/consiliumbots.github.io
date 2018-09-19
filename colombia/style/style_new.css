@@ -1,0 +1,144 @@
+svg{
+	overflow: visible;
+}
+
+
+iframe {
+  border: none;
+  display:block;
+  margin: 0;
+  padding: 0;
+
+}
+
+.instrucciones{
+  color: #0099ff;
+}
+
+
+
+/* Gráfico Deuda Pública*/
+
+.axis{
+  opacity: .5;
+}
+
+.line{
+  fill: none;
+  stroke: #444;
+  stroke-width: 4;
+}
+
+.area{
+  fill: #F4F4F4;
+}
+
+.bachelet{
+  fill: #F4F4F4;
+  opacity: 0.3;
+}
+
+.texto_bachelet{
+  fill: #da291c;
+}
+
+.text_pinera{
+  fill: #1d428a;
+}
+
+.pinera{
+  fill: #A4A4A4;
+  opacity: 0.1;
+}
+
+.texto_presi{
+  font-size: 1.1em;
+  opacity: 0.8;
+  background-color: green;
+
+}
+
+.your-line{
+  stroke: #4682B4;
+  stroke-width: 4;
+  stroke-dasharray: 4 4;
+}
+
+.button {
+    background-color: #fa4825; 
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    display: block; 
+    margin: 0 auto;
+    margin-top: 10px;
+    opacity: 0.7;
+}
+
+/*** Tooltips! ***/
+
+.fuente{
+  font-size: 0.8em;
+}
+
+.tip {
+  border-bottom: 1px dotted grey;
+  position: relative;
+  cursor: help;
+  text-decoration: none;
+  color: inherit;
+}
+.tip span {
+  display: none;
+  z-index: 100;
+  position: absolute;
+  padding: .6em;
+  padding-left: 1em;
+  top: 1.5em;
+  left: 2.4em;
+  width: 130%;
+  min-width: 200px;
+  background-color: white;
+  border: 1px solid;
+  border-radius: 0.5em;
+}
+
+.tip:hover span {
+  display: inline-block;
+}
+.sg-question-set,
+.sg-type-radio ul.sg-list-vertical li,
+.sg-type-checkbox ul.sg-list-vertical li,
+.sg-question-options,
+.sg-type-radio-likert .sg-question-options,
+.sg-type-table .sg-question-options,
+.sg-instructions
+{
+  overflow: visible;
+}
+
+@media (max-width: 978px) {
+    .container {
+      padding:0;
+      margin:0;
+    }
+
+        .section {
+      padding:5px 5px 5px 5px;
+      margin:0;
+    }
+
+    body {
+      padding:0;
+    }
+
+    .navbar-fixed-top, .navbar-fixed-bottom, .navbar-static-top {
+      margin-left: 0;
+      margin-right: 0;
+      margin-bottom:0;
+    }
+}
