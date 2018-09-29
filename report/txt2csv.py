@@ -1,20 +1,29 @@
-#import os
-import pandas as pd
+import os
 import csv
-from oauth2client.service_account import ServiceAccountCredentials
-import gspread
+import json
+import csv
+import re
+import sys
+import pandas as pd
 
+def getBaseDirectory():
+    try:
+        return os.path.dirname(__file__)
+    except NameError:
+        return ''
 
-with open('C:/Users/Gonzalo/Dropbox (JPAL LAC)/ConsiliumBots/Colombia/SimBot/QueVasaEstudiar/interactions.txt', 'r') as in_file:
+interactions_path  = "C:/Users/Franco/GitHub/QueVasaEstudiar"
+
+with open(interactions_path + '/interactions1.txt', 'r') as in_file:
     stripped = (line.strip() for line in in_file)
     lines = (line.split(";") for line in stripped if line)
-    with open("C:/Users/Gonzalo/Dropbox (JPAL LAC)/ConsiliumBots/Colombia/ReportPanel/log.csv", 'w') as out_file:
+    with open(interactions_path + '/log.csv', 'w') as out_file:
         writer = csv.writer(out_file)
         writer.writerows(lines)
-        
-data = pd.read_csv("C:/Users/Gonzalo/Dropbox (JPAL LAC)/ConsiliumBots/Colombia/ReportPanel/log.csv", error_bad_lines=False)
 
-largo=len(data)-1
+data = pd.read_csv(interactions_path + '/log.csv', error_bad_lines=False)
+largo=len(data)
+
 
 data["year"] = data.timestamp.str[0:4]
 data["month"] = data.timestamp.str[5:7]
@@ -35,8 +44,6 @@ unique_users = after18.user
 
 N_uu = len(unique_users.drop_duplicates(keep='first', inplace=False))
 
-#unique_users_2 = unique_users.drop_duplicates(keep='first', inplace=False)
-
 summaryafter18 = after18["user"].value_counts()
 summaryafter18 = summaryafter18.to_frame(name=None)
 summaryafter18.columns = ['interactions']
@@ -45,22 +52,31 @@ summaryafter18['url_id'] = summaryafter18.index
 
 summaryafter18.mean()
 
-students_data = pd.read_csv("C:/Users/Gonzalo/Dropbox (JPAL LAC)/ConsiliumBots/Colombia/SimBot/QueVasaEstudiar/Student_Features_Fall2018.csv")
-
+students_data = pd.read_csv(interactions_path + "/Student_Features_Fall2018.csv")
 students_data.set_index('url_id', inplace=True)
-
 result = pd.concat([summaryafter18, students_data], axis=1, join_axes=[summaryafter18.index])
+
 
 day_set = (students_data.day_group == "D01") | (students_data.day_group == "D02") |(students_data.day_group == "D03")
 engagement_rate= round(100*N_uu/len(students_data[day_set].drop_duplicates(keep='first', inplace=False)),2)
 engagement_rate_total = round(100*N_uu/len(students_data.drop_duplicates(keep='first', inplace=False)),2)
 
 print("Estadística generales: ")
-print("Interacciones: ",N_uu,"\nTasa de Engagement: ",engagement_rate,"%", "\nPromedio de interacciones por usuario: ",round(summaryafter18.mean()[0],2),sep = "")
-print("\nDesglose por grupo diario: ")
+print("Interacciones: ",N_uu,"/nTasa de Engagement: ",engagement_rate,"%", "/nPromedio de interacciones por usuario: ",round(summaryafter18.mean()[0],2),sep = "")
+print("/nDesglose por grupo diario: ")
 print(result["day_group"].value_counts())
-print("\nDesglose por ubicación: ")
+print("/nDesglose por ubicación: ")
 print(result["Student_Location_Name"].value_counts())
+
+
+
+
+
+#Change report in spreadsheets:
+#=============================
+
+from oauth2client.service_account import ServiceAccountCredentials
+import gspread
 
 json_path="C:/Users/Gonzalo/Dropbox (JPAL LAC)/ConsiliumBots/Colombia/ReportPanel/My Project-5584097d5fa1.json"
 dash_key = '1QpXG8KeEYzsMam2SSZE8ezu4yoYHYaj1oWNe9kkHtQ8'
@@ -74,14 +90,3 @@ db_ws.update_cell(2,2, N_uu)
 db_ws.update_cell(3,2, engagement_rate)
 db_ws.update_cell(4,2, round(summaryafter18.mean()[0],2))
 result.interactions.median()
-
-#db_ws2 = client.open_by_key(dash_key).worksheet('Data')
-#cell_list = db_ws2.range('A1:U360')
-#
-#for i in range(result.shape[0]):
-#        
-#    for x in range(len(cell_list)):
-#        cell_list[x].value = int(result.iloc[x, i])
-#            
-#    db_ws2.update_cells(cell_list)
-#            
