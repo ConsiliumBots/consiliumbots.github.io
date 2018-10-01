@@ -99,12 +99,12 @@ interactions = interactions.merge(Student_Features, left_on = 'Student_ID', righ
 
 #=====================================================================================================
 
-
-after18 = data[(data.year == 2018) & (data.month >= 9) & (data.day >= 18)]
-
-after18=after18[(after18.user != "992") & (after18.user != "YBOF9JBM8DE9ME6RE1K4") & (after18.user != "EMF393CY0PX7ESPW0BNQ")]
+after18 = allinteractions[(allinteractions.year == 2018) & (allinteractions.month >= 9) & (allinteractions.day >= 18)]
+after18=after18[(after18.user != "992") & (after18.user != "YBOF9JBM8DE9ME6RE1K4") & (after18.user != "EMF393CY0PX7ESW0BNQ")]
 total_interact = len(after18)
 unique_users = after18.user
+
+
 
 N_uu = len(unique_users.drop_duplicates(keep='first', inplace=False))
 
