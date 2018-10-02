@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import seaborn as sns; sns.set()
 import scipy, random, copy, h5py, pandas, math, csv, sys, os, pickle, re, json
 import matplotlib.pyplot as plt
 from itertools import combinations
@@ -90,11 +91,10 @@ allinteractions["hour"] = allinteractions.timestamp.str[11:13].astype(int)
 allinteractions["minute"] = allinteractions.timestamp.str[14:16].astype(int)
 allinteractions["second"] = allinteractions.timestamp.str[17:19].astype(int)
 
+
 DF1 = pd.read_csv(root+'/QueVasaEstudiar/Student_Features_Fall2018.csv'.format(100))
 DF2 = pd.read_csv(root+'/Bots_Colombia/ModelEstimation/deeplearning_estimation/interactions_bot.csv'.format(100))
 interactions = DF1.merge(DF2, left_on = 'Student_ID', right_on = 'Student_ID', how = 'left')
-interactions = interactions.merge(Student_Features, left_on = 'Student_ID', right_on = 'Student_ID')
-interactions = interactions.merge(Student_Features, left_on = 'Student_ID', right_on = 'Student_ID')
 
 
 #=====================================================================================================
@@ -104,9 +104,31 @@ after18=after18[(after18.user != "992") & (after18.user != "YBOF9JBM8DE9ME6RE1K4
 total_interact = len(after18)
 unique_users = after18.user
 
-
-
 N_uu = len(unique_users.drop_duplicates(keep='first', inplace=False))
+
+allinteractions = allinteractions.sort_values(['month','day'])
+allinteractions['Cummulative'] = np.cumsum(np.ones((allinteractions.shape[0],1))).astype(int)
+
+allinteractions['Interacted'] = 1
+
+from datetime import datetime
+allinteractions['times'] = list(map(lambda x: x[0:10] + " " + x[11:19], allinteractions['timestamp']))
+allinteractions['times'] = list(map(lambda x: datetime.strptime(x, '%Y-%m-%d %H:%M:%S'), allinteractions['times']))
+
+allinteractions['hours'] = list(map(lambda x: x[0:10] + " " + x[11:13], allinteractions['timestamp']))
+allinteractions['hours'] = list(map(lambda x: datetime.strptime(x, '%Y-%m-%d %H'), allinteractions['hours']))
+
+allinteractions['days'] = list(map(lambda x: x[0:10] , allinteractions['timestamp']))
+allinteractions['days'] = list(map(lambda x: datetime.strptime(x, '%Y-%m-%d'), allinteractions['days']))
+
+
+
+ax = sns.lineplot(x="times", y="Cummulative", data=allinteractions, color='salmon')
+ax = sns.lineplot(x="hours", y="Interacted", data=allinteractions.groupby('hours').sum().reset_index(), color='salmon')
+
+ax = sns.lineplot(x="days", y="Interacted", data=allinteractions[allinteractions['event_name'] == 'OPTIONS'].groupby('days').sum().reset_index(), color='salmon')
+
+
 
 summaryafter18 = after18["user"].value_counts()
 summaryafter18 = summaryafter18.to_frame(name=None)
