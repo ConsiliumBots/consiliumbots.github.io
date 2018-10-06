@@ -128,7 +128,6 @@ allinteractions['Cummulative'] = np.cumsum(np.ones((allinteractions.shape[0],1))
 
 allinteractions['Interacted'] = 1
 
-from datetime import datetime
 allinteractions['times'] = list(map(lambda x: x[0:10] + " " + x[11:19], allinteractions['timestamp']))
 allinteractions['times'] = list(map(lambda x: datetime.strptime(x, '%Y-%m-%d %H:%M:%S'), allinteractions['times']))
 
@@ -175,30 +174,30 @@ for tick in ax.get_xticklabels(): tick.set_rotation(45)
 i = 1
 j = 0
 wageDeviation = wageDeviation.sort_values(by = ['user', 'times'])
-wageDeviation['interaction'] = -999
+wageDeviation['numberMenu'] = -999
 for i in range(1,wageDeviation.shape[0]):
     if wageDeviation['user'].iloc[i] == wageDeviation['user'].iloc[i-1]:
         j += 1
-        wageDeviation['interaction'].iloc[i] = j
+        wageDeviation['numberMenu'].iloc[i] = j
     else:
         j = 1
-        wageDeviation['interaction'].iloc[i] = j
+        wageDeviation['numberMenu'].iloc[i] = j
 
-wageDeviation['interaction'].iloc[0]=1
-wageDeviation['interaction'][wageDeviation['interaction'] == 8] = 8
-wageDeviation['interaction'][wageDeviation['interaction'] == 9] = 8
-wageDeviation['interaction'][wageDeviation['interaction']>=10] = 9
+wageDeviation['numberMenu'].iloc[0]=1
+wageDeviation['numberMenu'][wageDeviation['numberMenu'] == 8] = 8
+wageDeviation['numberMenu'][wageDeviation['numberMenu'] == 9] = 8
+wageDeviation['numberMenu'][wageDeviation['numberMenu']>=10] = 9
 wageDeviation['N_total']=1
 
 
 
 fig, ax = plt.subplots()
-ax = sns.lineplot(x="interaction", y="absWageDeviation", data=wageDeviation[wageDeviation['days']<'2018-10-05 00:00:00'], color='blue')
+ax = sns.lineplot(x="numberMenu", y="absWageDeviation", data=wageDeviation[wageDeviation['days']<'2018-10-05 00:00:00'], color='blue')
 ax.set_xlabel('Number of Menu')
 ax.set_ylabel('Percentage deviation from true value', color='tab:blue')
 ax.tick_params(axis='y', labelcolor='tab:blue')
 ax2 = ax.twinx()  # instantiate a second axes that shares the same x-axis
-ax2 = sns.lineplot(x="interaction", y="N_total", data=wageDeviation[wageDeviation['days']<'2018-10-05 00:00:00'].groupby(['interaction']).sum().reset_index(), color='red')
+ax2 = sns.lineplot(x="numberMenu", y="N_total", data=wageDeviation[wageDeviation['days']<'2018-10-05 00:00:00'].groupby(['numberMenu']).sum().reset_index(), color='red')
 ax2.set_ylabel('Number of observations', color='tab:red')  # we already handled the x-label with ax1
 ax2.tick_params(axis='y', labelcolor='tab:red')
 labels = [int(x) for x in ax.get_xticks().tolist()]
