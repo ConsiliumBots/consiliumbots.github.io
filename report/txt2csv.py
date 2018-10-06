@@ -87,22 +87,39 @@ allinteractions = allinteractions[(allinteractions.user != 'default-user') & (al
 allinteractions["year"] = allinteractions.timestamp.str[0:4].astype(int)
 allinteractions["month"] = allinteractions.timestamp.str[5:7].astype(int)
 allinteractions["day"] = allinteractions.timestamp.str[8:10].astype(int)
-allinteractions["hour"] = allinteractions.timestamp.str[11:13].astype(int)
-allinteractions["minute"] = allinteractions.timestamp.str[14:16].astype(int)
 allinteractions["second"] = allinteractions.timestamp.str[17:19].astype(int)
+allinteractions["minute"] = allinteractions.timestamp.str[14:16].astype(int)
+allinteractions["hour"] = allinteractions.timestamp.str[11:13].astype(int) - 7
+allinteractions["hour"][allinteractions["hour"]==-7] = 17
+allinteractions["hour"][allinteractions["hour"]==-6] = 18
+allinteractions["hour"][allinteractions["hour"]==-5] = 19
+allinteractions["hour"][allinteractions["hour"]==-4] = 20
+allinteractions["hour"][allinteractions["hour"]==-3] = 21
+allinteractions["hour"][allinteractions["hour"]==-2] = 22
+allinteractions["hour"][allinteractions["hour"]==-1] = 23
+
+allinteractions = allinteractions[(allinteractions.year == 2018) & (allinteractions.month >= 9)]
+allinteractions = allinteractions[(allinteractions.user != "992") & (allinteractions.user != "YBOF9JBM8DE9ME6RE1K4") & (allinteractions.user != "EMF393CY0PX7ESW0BNQ")]
+
+studentFeatures = pd.read_csv(root+'/QueVasaEstudiar/Student_Features_Fall2018.csv'.format(100))
+interactionsBot = pd.read_csv(root+'/Bots_Colombia/ModelEstimation/deeplearning_estimation/interactions_bot.csv'.format(100))
+wageDeviation   = pd.read_csv(root+'/Bots_Colombia/ModelEstimation/deeplearning_estimation/wage_deviation.csv'.format(100)).drop(columns = ['Unnamed: 0']).rename(columns= {'studentID': 'user'})
+interactions    = studentFeatures.merge(interactionsBot, left_on = 'Student_ID', right_on = 'Student_ID', how = 'left')
 
 
-DF1 = pd.read_csv(root+'/QueVasaEstudiar/Student_Features_Fall2018.csv'.format(100))
-DF2 = pd.read_csv(root+'/Bots_Colombia/ModelEstimation/deeplearning_estimation/interactions_bot.csv'.format(100))
-interactions = DF1.merge(DF2, left_on = 'Student_ID', right_on = 'Student_ID', how = 'left')
-
+from datetime import datetime
+wageDeviation['hours'] = list(map(lambda x: x[0:10] + " " + x[11:13], wageDeviation['time']))
+wageDeviation['hours'] = list(map(lambda x: datetime.strptime(x, '%Y-%m-%d %H'), wageDeviation['hours']))
+wageDeviation['times'] = list(map(lambda x: x[0:10] + " " + x[11:19], wageDeviation['time']))
+wageDeviation['times'] = list(map(lambda x: datetime.strptime(x, '%Y-%m-%d %H:%M:%S'), wageDeviation['times']))
+wageDeviation['days'] = list(map(lambda x: x[0:10] , wageDeviation['time']))
+wageDeviation['days'] = list(map(lambda x: datetime.strptime(x, '%Y-%m-%d'), wageDeviation['days']))
+wageDeviation['interaction'] = 1
 
 #=====================================================================================================
 
-after18 = allinteractions[(allinteractions.year == 2018) & (allinteractions.month >= 9) & (allinteractions.day >= 18)]
-after18=after18[(after18.user != "992") & (after18.user != "YBOF9JBM8DE9ME6RE1K4") & (after18.user != "EMF393CY0PX7ESW0BNQ")]
-total_interact = len(after18)
-unique_users = after18.user
+total_interact = len(allinteractions)
+unique_users = allinteractions.user
 
 N_uu = len(unique_users.drop_duplicates(keep='first', inplace=False))
 
@@ -122,70 +139,58 @@ allinteractions['days'] = list(map(lambda x: x[0:10] , allinteractions['timestam
 allinteractions['days'] = list(map(lambda x: datetime.strptime(x, '%Y-%m-%d'), allinteractions['days']))
 
 
-
+#Cummulative interaction by second
 ax = sns.lineplot(x="times", y="Cummulative", data=allinteractions, color='salmon')
+for tick in ax.get_xticklabels(): tick.set_rotation(45)
+
+#Frequency of interaction by hour
 ax = sns.lineplot(x="hours", y="Interacted", data=allinteractions.groupby('hours').sum().reset_index(), color='salmon')
+for tick in ax.get_xticklabels(): tick.set_rotation(45)
 
-ax = sns.lineplot(x="days", y="Interacted", data=allinteractions[allinteractions['event_name'] == 'OPTIONS'].groupby('days').sum().reset_index(), color='salmon')
-
-
-
-summaryafter18 = after18["user"].value_counts()
-summaryafter18 = summaryafter18.to_frame(name=None)
-summaryafter18.columns = ['interactions']
-summaryafter18['url_id'] = summaryafter18.index
-#summaryafter18.loc[summaryafter18['interactions'] > 100, 'interactions'] = 100
-
-summaryafter18.mean()
-
-students_data = pd.read_csv(interactions_path + "/Student_Features_Fall2018.csv")
-students_data.set_index('url_id', inplace=True)
-result = pd.concat([summaryafter18, students_data], axis=1, join_axes=[summaryafter18.index])
+ax = sns.lineplot(x="hour", y="Interacted", data=allinteractions[allinteractions['event_name'] == 'initialQuestion'].groupby('hour').sum().reset_index(), color='maroon', label='Initial question')
+ax = sns.lineplot(x="hour", y="Interacted", data=allinteractions[allinteractions['event_name'] == 'askInstitution'].groupby('hour').sum().reset_index(), color='red', label='Ask institution')
+ax = sns.lineplot(x="hour", y="Interacted", data=allinteractions[allinteractions['event_name'] == 'askCareer'].groupby('hour').sum().reset_index(), color='green', label='Ask program')
+ax = sns.lineplot(x="hour", y="Interacted", data=allinteractions[allinteractions['event_name'] == 'askLevel'].groupby('hour').sum().reset_index(), color='salmon', label='Ask level')
+ax = sns.lineplot(x="hour", y="Interacted", data=allinteractions[allinteractions['event_name'] == 'OPTIONS'].groupby('hour').sum().reset_index(), color='gray', label='Brain options')
+ax = sns.lineplot(x="hour", y="Interacted", data=allinteractions[allinteractions['event_name'] == 'OPTIONS_SELECTION'].groupby('hour').sum().reset_index(), color='orange', label='Select Option')
+for tick in ax.get_xticklabels(): tick.set_rotation(45)
 
 
-day_set = (students_data.day_group == "D01") | (students_data.day_group == "D02") |(students_data.day_group == "D03")
-engagement_rate= round(100*N_uu/len(students_data[day_set].drop_duplicates(keep='first', inplace=False)),2)
-engagement_rate_total = round(100*N_uu/len(students_data.drop_duplicates(keep='first', inplace=False)),2)
+#Wage differential:
+#ax = sns.lineplot(x="hours", y="wageDeviation", data=wageDeviation, color='salmon')
+#for tick in ax.get_xticklabels(): tick.set_rotation(45)
 
-print("Estadística generales: ")
-print("Interacciones: ",N_uu,"/nTasa de Engagement: ",engagement_rate,"%", "/nPromedio de interacciones por usuario: ",round(summaryafter18.mean()[0],2),sep = "")
-print("/nDesglose por grupo diario: ")
-print(result["day_group"].value_counts())
-print("/nDesglose por ubicación: ")
-print(result["Student_Location_Name"].value_counts())
+#ax = sns.lineplot(x="hours", y="absWageDeviation", data=wageDeviation, color='salmon')
+#for tick in ax.get_xticklabels(): tick.set_rotation(45)
 
-#Type of interaction:
-A = allinteractions.event_name.value_counts()
-askAboutProgram   = A[0]
-initialQuestion   = A[1]
-askInstitution    = A[2]
-truth             = A[3]
-askCareer         = A[4]
-OPTIONS           = A[5]
-askArea           = A[6]
-OPTIONS_SELECTION = A[7]
-askLevel          = A[8]
+wageDeviation['absWageDeviation'] = list(map(lambda x: abs(x), wageDeviation['wageDeviation']))
 
-import seaborn as sns; sns.set()
-import matplotlib.pyplot as plt
+fig, ax1 = plt.subplots()
+ax = sns.lineplot(x="days", y="interaction", data=wageDeviation[wageDeviation['days']<'2018-10-05 00:00:00'].groupby(['days']).sum().reset_index(), color='blue')
+ax.set_xlabel('')
+ax.set_ylabel('Number of interactions', color='tab:blue')
+ax.tick_params(axis='y', labelcolor='tab:blue')
+ax2 = ax.twinx()  # instantiate a second axes that shares the same x-axis
+ax2 = sns.lineplot(x="days", y="absWageDeviation", data=wageDeviation[wageDeviation['days']<'2018-10-05 00:00:00'], color='red')
+ax2.set_ylabel('Wage Differential', color='tab:red')  # we already handled the x-label with ax1
+ax2.tick_params(axis='y', labelcolor='tab:red')
+for tick in ax.get_xticklabels(): tick.set_rotation(45)
 
-ax = sns.lineplot(x="day", y="second",hue="event", data=allinteractions)
+i = 1
+j = 0
+wageDeviation = wageDeviation.sort_values(by = ['user', 'times'])
+wageDeviation['interaction'] = -999
+for i in range(1,wageDeviation.shape[0]):
+    if wageDeviation['user'].iloc[i] == wageDeviation['user'].iloc[i-1]:
+        j += 1
+        wageDeviation['interaction'].iloc[i] = j
+    else:
+        j = 1
+        wageDeviation['interaction'].iloc[i] = j
+wageDeviation['interaction'].iloc[0]=1
+wageDeviation['interaction'][wageDeviation['interaction']>20] = 20
 
-#Change report in spreadsheets:
-#=============================
 
-from oauth2client.service_account import ServiceAccountCredentials
-import gspread
-
-json_path="C:/Users/Gonzalo/Dropbox (JPAL LAC)/ConsiliumBots/Colombia/ReportPanel/My Project-5584097d5fa1.json"
-dash_key = '1QpXG8KeEYzsMam2SSZE8ezu4yoYHYaj1oWNe9kkHtQ8'
-scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
-creds = (ServiceAccountCredentials.from_json_keyfile_name(json_path, scope))
-client = gspread.authorize(creds)
-db_ws = client.open_by_key(dash_key).worksheet('Dashboard')
-
-db_ws.update_cell(1,2, total_interact)
-db_ws.update_cell(2,2, N_uu)
-db_ws.update_cell(3,2, engagement_rate)
-db_ws.update_cell(4,2, round(summaryafter18.mean()[0],2))
-result.interactions.median()
+ax = sns.lineplot(x="interaction", y="absWageDeviation", data=wageDeviation[wageDeviation['days']<'2018-10-05 00:00:00'], color='blue')
+ax.set_xlabel('Number of interactions')
+ax.set_ylabel('Percentage deviation from true value')
