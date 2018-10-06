@@ -156,12 +156,6 @@ ax = sns.lineplot(x="hour", y="Interacted", data=allinteractions[allinteractions
 for tick in ax.get_xticklabels(): tick.set_rotation(45)
 
 
-#Wage differential:
-#ax = sns.lineplot(x="hours", y="wageDeviation", data=wageDeviation, color='salmon')
-#for tick in ax.get_xticklabels(): tick.set_rotation(45)
-
-#ax = sns.lineplot(x="hours", y="absWageDeviation", data=wageDeviation, color='salmon')
-#for tick in ax.get_xticklabels(): tick.set_rotation(45)
 
 wageDeviation['absWageDeviation'] = list(map(lambda x: abs(x), wageDeviation['wageDeviation']))
 
@@ -176,6 +170,8 @@ ax2.set_ylabel('Wage Differential', color='tab:red')  # we already handled the x
 ax2.tick_params(axis='y', labelcolor='tab:red')
 for tick in ax.get_xticklabels(): tick.set_rotation(45)
 
+
+#Get number of interactions
 i = 1
 j = 0
 wageDeviation = wageDeviation.sort_values(by = ['user', 'times'])
@@ -187,10 +183,24 @@ for i in range(1,wageDeviation.shape[0]):
     else:
         j = 1
         wageDeviation['interaction'].iloc[i] = j
+
 wageDeviation['interaction'].iloc[0]=1
-wageDeviation['interaction'][wageDeviation['interaction']>20] = 20
+wageDeviation['interaction'][wageDeviation['interaction'] == 8] = 8
+wageDeviation['interaction'][wageDeviation['interaction'] == 9] = 8
+wageDeviation['interaction'][wageDeviation['interaction']>=10] = 9
+wageDeviation['N_total']=1
 
 
+
+fig, ax = plt.subplots()
 ax = sns.lineplot(x="interaction", y="absWageDeviation", data=wageDeviation[wageDeviation['days']<'2018-10-05 00:00:00'], color='blue')
-ax.set_xlabel('Number of interactions')
-ax.set_ylabel('Percentage deviation from true value')
+ax.set_xlabel('Number of Menu')
+ax.set_ylabel('Percentage deviation from true value', color='tab:blue')
+ax.tick_params(axis='y', labelcolor='tab:blue')
+ax2 = ax.twinx()  # instantiate a second axes that shares the same x-axis
+ax2 = sns.lineplot(x="interaction", y="N_total", data=wageDeviation[wageDeviation['days']<'2018-10-05 00:00:00'].groupby(['interaction']).sum().reset_index(), color='red')
+ax2.set_ylabel('Number of observations', color='tab:red')  # we already handled the x-label with ax1
+ax2.tick_params(axis='y', labelcolor='tab:red')
+labels = [int(x) for x in ax.get_xticks().tolist()]
+labels[-2]='>9'
+ax.set_xticklabels(labels)
