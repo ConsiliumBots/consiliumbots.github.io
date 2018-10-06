@@ -263,15 +263,17 @@ ax = sns.lineplot(x="hour", y="Interacted", data=allinteractions[allinteractions
 for tick in ax.get_xticklabels(): tick.set_rotation(45)
 plt.show()
 
-
+last_date = list(set(wageDeviation['days']))
+last_date.sort()
+last_date = str(last_date[-1])
 #Wage diferential by day
 fig, ax1 = plt.subplots()
-ax = sns.lineplot(x="days", y="interaction", data=wageDeviation[wageDeviation['days']<'2018-10-05 00:00:00'].groupby(['days']).sum().reset_index(), color='blue')
+ax = sns.lineplot(x="days", y="interaction", data=wageDeviation[wageDeviation['days']<last_date].groupby(['days']).sum().reset_index(), color='blue')
 ax.set_xlabel('')
 ax.set_ylabel('Number of interactions', color='tab:blue')
 ax.tick_params(axis='y', labelcolor='tab:blue')
 ax2 = ax.twinx()  # instantiate a second axes that shares the same x-axis
-ax2 = sns.lineplot(x="days", y="absWageDeviation", data=wageDeviation[wageDeviation['days']<'2018-10-05 00:00:00'], color='red')
+ax2 = sns.lineplot(x="days", y="absWageDeviation", data=wageDeviation[wageDeviation['days']<last_date], color='red')
 ax2.set_ylabel('Wage Differential', color='tab:red')  # we already handled the x-label with ax1
 ax2.tick_params(axis='y', labelcolor='tab:red')
 for tick in ax.get_xticklabels(): tick.set_rotation(45)
@@ -280,12 +282,12 @@ plt.show()
 
 #Get number of interactions
 fig, ax = plt.subplots()
-ax = sns.lineplot(x="numberMenu", y="absWageDeviation", data=wageDeviation[wageDeviation['days']<'2018-10-05 00:00:00'], color='blue')
+ax = sns.lineplot(x="numberMenu", y="absWageDeviation", data=wageDeviation[wageDeviation['days']<last_date], color=gcolor)
 ax.set_xlabel('Number of Menu')
 ax.set_ylabel('Percentage deviation from true value', color='tab:blue')
 ax.tick_params(axis='y', labelcolor='tab:blue')
 ax2 = ax.twinx()  # instantiate a second axes that shares the same x-axis
-ax2 = sns.lineplot(x="numberMenu", y="N_total", data=wageDeviation[wageDeviation['days']<'2018-10-05 00:00:00'].groupby(['numberMenu']).sum().reset_index(), color='red')
+ax2 = sns.lineplot(x="numberMenu", y="N_total", data=wageDeviation[wageDeviation['days']<last_date].groupby(['numberMenu']).sum().reset_index(), color='gray')
 ax2.set_ylabel('Number of observations', color='tab:red')  # we already handled the x-label with ax1
 ax2.tick_params(axis='y', labelcolor='tab:red')
 labels = [int(x) for x in ax.get_xticks().tolist()]
@@ -296,22 +298,38 @@ plt.show()
 
 #Get % of dropout - OutsideOption:
 
-#Bar Plots for Neural Net Performance:
+#Number of students assigned to each treatment:
 seedAssignment['count'] = 1
-ax = sns.barplot(x="bot", y="count", data=seedAssignment.groupby(['bot']).sum().reset_index(), color='maroon', capsize=.2)
+ax = sns.barplot(x="bot", y="count", data=seedAssignment.groupby(['bot']).sum().reset_index(), color=gcolor, capsize=.2)
 ax.set_xlabel('')
 ax.set_ylabel('Number of treatments assigned')
 ax.set_xticklabels(bot_label)
 plt.show()
 
-
-#Bar Plots for Neural Net Performance:
+#Number of outside option clicks
 interactions['outsideOption'] = (interactions['Selection'] == -999)
-ax = sns.barplot(x="bot", y="outsideOption", data=interactions.groupby(['bot']).sum().reset_index(), color='maroon', capsize=.2)
+ax = sns.barplot(x="bot", y="outsideOption", data=interactions.groupby(['bot']).sum().reset_index(), color=gcolor, capsize=.2)
 ax.set_xlabel('')
 ax.set_ylabel('Number of outside option clicks')
 ax.set_xticklabels(bot_label)
 plt.show()
+
+#Percentage of outside option selected
+interactions['outsideOption'] = (interactions['Selection'] == -999)
+ax = sns.barplot(x="bot", y="outsideOption", data=interactions.groupby(['bot']).mean().reset_index(), color=gcolor, capsize=.2)
+ax.set_xlabel('')
+ax.set_ylabel('Number of outside option clicks')
+ax.set_xticklabels(bot_label)
+plt.show()
+
+#Number of menus shown by treatment arm:
+interactions['count'] = 1
+ax = sns.barplot(x="bot", y="count", data=interactions.groupby(['bot']).sum().reset_index(), color=gcolor, capsize=.2)
+ax.set_xlabel('')
+ax.set_ylabel('Number of menus showed by treatment')
+ax.set_xticklabels(bot_label)
+plt.show()
+
 
 
 #Probability
