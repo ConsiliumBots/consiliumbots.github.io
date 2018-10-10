@@ -78,15 +78,7 @@ def arange_outcomes(outcomes):
 #1.1. IMPORT DATA ABOUT OPTIONS:
 HEOptions = arange_outcomes(outcomes)
 
-with open(root+'/QueVasaEstudiar/interactions.txt', 'r') as in_file:
-    stripped = (line.strip() for line in in_file)
-    lines = (line.split(";") for line in stripped if line)
-    with open(root+'/QueVasaEstudiar/log.csv', 'w') as out_file:
-        writer = csv.writer(out_file)
-        writer.writerows(lines)
-
-#1.3. IMPORT DATA ABOUT ALL INTERACTIONS:
-allinteractions = pd.read_csv(root+'/QueVasaEstudiar/log.csv', error_bad_lines=False)
+allinteractions = pd.read_csv(root+'/Bots_Colombia/ModelEstimation/deeplearning_estimation/allinteractions.csv', error_bad_lines=False)
 allinteractions = allinteractions[(allinteractions.user != 'default-user') & (allinteractions.user.str.len() == 20)].reset_index(drop=True)
 allinteractions["year"] = allinteractions.timestamp.str[0:4].astype(int)
 allinteractions["month"] = allinteractions.timestamp.str[5:7].astype(int)
@@ -143,6 +135,14 @@ wageDeviation['numberMenu'][wageDeviation['numberMenu'] == 8] = 8
 wageDeviation['numberMenu'][wageDeviation['numberMenu'] == 9] = 8
 wageDeviation['numberMenu'][wageDeviation['numberMenu']>=10] = 9
 wageDeviation['N_total']=1
+
+wageDeviation['Max_interaction'] = ""
+wageDeviation = wageDeviation.merge(wageDeviation.groupby(['user']).sum().reset_index()[['user', 'interaction']].rename(columns ={'interaction':'max_interaction'}), left_on = 'user', right_on = 'user')
+wageDeviation['Max_interaction'][(wageDeviation['max_interaction'] > 0) & (wageDeviation['max_interaction'] <= 3)] = ']0-3]'
+wageDeviation['Max_interaction'][(wageDeviation['max_interaction'] > 3) & (wageDeviation['max_interaction'] <= 6)] = ']3-6]'
+wageDeviation['Max_interaction'][(wageDeviation['max_interaction'] > 6) & (wageDeviation['max_interaction'] <= 9)] = ']6-9]'
+wageDeviation['Max_interaction'][wageDeviation['max_interaction'] >= 9] = ']9-inf]'
+
 
 
 #1. Data for performance of the Structural and ML model:
@@ -290,6 +290,17 @@ ax2 = ax.twinx()  # instantiate a second axes that shares the same x-axis
 ax2 = sns.lineplot(x="numberMenu", y="N_total", data=wageDeviation[wageDeviation['days']<last_date].groupby(['numberMenu']).sum().reset_index(), color='gray')
 ax2.set_ylabel('Number of observations', color='tab:red')  # we already handled the x-label with ax1
 ax2.tick_params(axis='y', labelcolor='tab:red')
+labels = [int(x) for x in ax.get_xticks().tolist()]
+labels[-2]='>9'
+ax.set_xticklabels(labels)
+plt.show()
+
+
+fig, ax = plt.subplots()
+ax = sns.lineplot(x="numberMenu", y="absWageDeviation", hue='Max_interaction',err_style="bars", ci=0, data=wageDeviation[wageDeviation['days']<last_date], color=gcolor)
+ax.set_xlabel('Number of Menu')
+ax.set_ylabel('Percentage deviation from true value', color='tab:blue')
+ax.tick_params(axis='y', labelcolor='tab:blue')
 labels = [int(x) for x in ax.get_xticks().tolist()]
 labels[-2]='>9'
 ax.set_xticklabels(labels)
